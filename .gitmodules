@@ -1,3 +1,6 @@
 [submodule "probe"]
 	path = probe
 	url = https://github.com/reliasolve/probe.git
+[submodule "reduce"]
+	path = reduce
+	url = https://github.com/reliasolve/reduce.git

@@ -21,11 +21,24 @@ if [ "$2" != "" ] ; then orig="$2" ; fi
 echo "Checking $new against $orig"
 
 #####################
-# Make sure the probe submodule is checked out
+# Make sure the reduce submodule is checked out
 
 echo "Updating submodule"
 git submodule update --init
+(cd reduce; git pull) &> /dev/null 
+
+#####################
+# Make sure the probe submodule is checked out
+
+echo "Updating submodule"
 (cd probe; git pull) &> /dev/null 
+
+######################
+# Build the latest reduce, which we'll use to place hydrogens.
+
+echo "Building reduce"
+(cd reduce; make) &> /dev/null 
+reduce_exe="./reduce/reduce_src/reduce"
 
 ######################
 # Check out each version and build each.
@@ -64,8 +77,9 @@ for f in $files; do
   # We must extract to a file and then run with that file as a command-line argument
   # because the original version did not process all models in a file when run with
   # the model coming on standard input.
-  tfile=outputs/temp_file.tmp
-  gunzip < $inf > $tfile
+  # We run reduce on the file without flips so that we get placed hydrogens
+  tfile=outputs/${f}_H.pdb
+  gunzip < $inf | $reduce_exe - -noflip > $tfile 2> outputs/$f.reduce.stderr
 
   ##############################################
   # Test with no command-line arguments
