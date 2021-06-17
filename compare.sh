@@ -56,9 +56,9 @@ mkdir -p build_new
 (cd build_new; cmake -DCMAKE_BUILD_TYPE=Release ../probe; make) &> /dev/null
 
 orig_exe="./probe/probe"
-orig_args=""
+orig_args='-c ALL'
 new_exe="./build_new/probe"
-new_args=""
+new_args='-c ALL'
 
 ######################
 # Generate two outputs for each test file, redirecting standard
@@ -91,8 +91,8 @@ for f in $files; do
   wait
 
   # Strip out expected differences
-  grep -v caption < outputs/$f.orig | grep -v command > outputs/$f.orig.strip
-  grep -v caption < outputs/$f.new  | grep -v command > outputs/$f.new.strip
+  grep -v program < outputs/$f.orig | grep -v command > outputs/$f.orig.strip
+  grep -v program < outputs/$f.new  | grep -v command > outputs/$f.new.strip
 
   # Test for unexpected differences
   d=`diff outputs/$f.orig.strip outputs/$f.new.strip | wc -c`
